@@ -1,0 +1,420 @@
+\documentclass[12pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage{fullpage}
+\usepackage{parskip}
+\usepackage{amsmath,amssymb,mathtools}
+\usepackage{microtype}
+\usepackage{booktabs}
+\usepackage{graphicx,subcaption}
+\usepackage{algorithm}
+\usepackage[round]{natbib}
+\usepackage{tikz-cd}
+
+
+\usepackage[most]{tcolorbox}
+\newtcolorbox[]{solution}[1][]{%
+    breakable,
+    enhanced,
+    colback=white,
+    title=Solution,
+    #1
+}
+\usepackage{xcolor} %hilight
+\newcommand{\hilight}[1]{\colorbox{yellow}{#1}}
+%% ---------------------------------
+%\begin{solution}
+%\hilight{TODO}
+%\end{solution}
+%% ---------------------------------
+
+
+
+\usepackage{tikz}
+\newcommand*\circled[1]{
+\tikz[baseline=(char.base)]{\node[shape=circle,draw,inner sep=1pt] (char) {#1};}
+}
+            
+ 
+% xun
+\newcommand{\Gcal}{\mathcal{G}}
+\newcommand{\Ical}{\mathcal{I}}
+\newcommand{\Hcal}{\mathcal{H}}
+\newcommand{\Ucal}{\mathcal{U}}
+\newcommand{\Tcal}{\mathcal{T}}
+\newcommand{\Ncal}{\mathcal{N}}
+\newcommand{\Cbs}{\boldsymbol{C}}
+\newcommand{\Sbs}{\boldsymbol{S}}
+\newcommand{\Pa}{\text{Pa}}
+\newcommand{\De}{\text{De}}
+\newcommand{\Nd}{\text{Nd}}
+            
+
+\title{10-708 PGM (Spring 2019): Homework 1
+{\color{red} v1.1}
+}
+\author{
+\begin{tabular}{rl}
+Andrew ID: & Moroccan Student\\
+Name: & [Belcaid Anass] \\
+Collaborators: & [Working alone]
+\end{tabular}
+}
+\date{}
+
+
+\begin{document}
+
+\maketitle
+
+
+
+\section{Bayesian Networks [20 points] (Xun)}
+
+State True or False, and briefly justify your answer in a few sentences. You can cite theorems from \citet{koller2009probabilistic}. Throughout the section, $P$ is a distribution and $\Gcal$ is a BN structure. 
+
+\begin{enumerate}
+
+\item \textbf{[2 points]} If $ A \perp B \ | \ C $ and $ A \perp C \ | \ B $, then $ A \perp B $ and $ A \perp C $. 
+(Suppose the joint distribution of $ A, B, C $ is positive.)
+
+\begin{solution}
+ \textbf{True}, as this a special case for the \textbf{contraction} theorem
+ on~\cite{koller2009probabilistic}. 
+\[
+  (X \perp Y | Z, W)\;\&\;(X \perp Z | Y, W) \Longrightarrow (X \perp Y, Z | W)
+\]
+
+We simply take $X=A$, $B=Y$, $C=Z$ and $W$ is a sure event. We then get
+
+\[
+  (A \perp B, C)
+\]
+
+\end{solution}
+
+\begin{figure}[h]
+\centering
+\begin{tikzcd}
+A \arrow[r] & B \arrow[r] & C \\
+D \arrow[ur] \arrow[r] & E & 
+\end{tikzcd}
+\caption{A Bayesian network.}
+\label{fig:y-bayesnet}
+\end{figure}
+
+
+\item \textbf{[2 points]} In Figure~\ref{fig:y-bayesnet}, $ E \perp C \ | \ B $.
+
+\begin{solution}
+  \textbf{True}, As any path to $C$ is blocked by $B$ the unique parent to
+  $C$.
+\end{solution}
+
+\item \textbf{[2 points]} In Figure~\ref{fig:y-bayesnet}, $ A \perp E \ | \ C $.
+
+\begin{solution}
+ \textbf{False}, There is an active trail using the $V$-structure
+ $A\rightarrow B \leftarrow D$.
+ This structure is activated a child of $B$, which is $C$, is activated.
+ Hence the trail $A-B-D-E$ is active.
+\end{solution}
+
+
+
+\begin{figure}[h]
+\centering
+\begin{tikzcd}
+P \text{ factorizes over } \Gcal  
+\arrow[r, Rightarrow, "(1)"] 
+& \Ical (\Gcal) \subseteq \Ical (P) 
+\arrow[r, Rightarrow, "(2)"] 
+& \Ical_\ell (\Gcal) \subseteq \Ical (P)
+\arrow[ll, Rightarrow, bend left=30, "(3)" above]
+\end{tikzcd}
+\caption{Some relations in Bayesian networks.}
+\label{fig:relations-bayesnet}
+\end{figure}
+
+
+
+\item \textbf{[2 points]} In Figure~\ref{fig:relations-bayesnet}, relation (1) is true.
+
+\begin{solution}
+  \textbf{True}, direct result of  the theorem (3.2) on~\cite{koller2009probabilistic}.
+\end{solution}
+\item \textbf{[2 points]} In Figure~\ref{fig:relations-bayesnet}, relation (2) is true.
+
+\begin{solution}
+  \textbf{True}, If the set of independences by the d-separation are
+  verified in a distribution $P$, then $P$ must also verify the local
+  independences in the Bayesian graph.
+\end{solution}
+\item \textbf{[2 points]} In Figure~\ref{fig:relations-bayesnet}, relation (3) is true.
+
+\begin{solution}
+  \textbf{True}. Direct result of theorem (3.1)
+  on~\cite{koller2009probabilistic}
+\end{solution}
+
+\item \textbf{[2 points]} If $ \Gcal $ is an I-map for $ P $, then $ P $ may have extra conditional independencies than $ \Gcal $.
+
+
+\begin{solution}
+  \textbf{True}, As the definition of I-map only forces $P$ to verify all the
+  of independences in $\Gcal$. $P$ could have additional hidden
+  independences that are not reflected in the graph.
+\end{solution}
+
+\item \textbf{[2 points]} Two BN structures $ \Gcal_1 $ and $ \Gcal_2 $ are I-equivalent iff they have the same skeleton and the same set of v-structures.
+
+\begin{solution}
+  \textbf{False}, the $v$-structure is not sufficient here, as in one graph
+  the parents could be connected and not in the other one. The correct
+  theorem (3.8)~\cite{koller2009probabilistic} states that two graphs are
+  $I$-equivalent if they have the same skeleton and the same
+  \textbf{immoralities}.
+\end{solution}
+
+\item \textbf{[2 points]} The minimal I-map of a distribution is the I-map with fewest edges.
+
+\begin{solution}
+  \textbf{False}, a minimal map simply means that it can accept an edge
+  removal to be an $I$-map. Since this map is not unique, we could find
+  several $I$-maps with different number of edges. 
+\end{solution}
+\item \textbf{[2 points]} The P-map of a distribution, if exists, is unique. 
+\begin{solution}
+  \textbf{False}. From~\cite[page 84]{koller2009probabilistic}, the $P$-map
+  is unique up to $I$-equivalence between networks.
+\end{solution}
+\end{enumerate}
+
+
+\newpage
+
+
+\section{Undirected Graphical Models [25 points] (Paul)}
+
+\subsection{Local, Pairwise and Global Markov Properties [18 points]}
+
+\begin{enumerate}
+    \item Prove the following properties:
+    \begin{itemize}
+        \item \textbf{[2 points]} If $A \perp {\color{red} (B,D) } \ | \ C$ then $A \perp B \ | \ C$.
+        \item \textbf{[2 points]} If $A \perp {\color{red} (B,D) } \ | \ C$ then $A \perp B \ | \ {\color{red} (C,D) }$ and $A \perp D \ | \ {\color{red} (B,C) }$.
+        \item \textbf{[2 points]} For strictly positive distributions, if $A \perp B \ | \ {\color{red} (C,D) }$ and $A \perp C \ | \ {\color{red} (B,D) }$ then $A \perp {\color{red} (B,C) } \ | \ D$.
+    \end{itemize}
+    \item \textbf{[6 points]} Show that for any undirected graph $G$ and distribution $P$, if $P$ factorizes according to $G$, then $P$ will also satisfy the global Markov properties of $G$.
+    \item \textbf{[6 points]} Show that for any undirected graph $G$ and distribution $P$, if $P$ satisfies the local Markov property with respect to $G$, then $P$ will also satisfy the pairwise Markov property of $G$.
+\end{enumerate}
+
+\subsection{Gaussian Graphical Models [7 points]}
+
+Now we consider a specific instance of undirected graphical models. Let $X = \{ X_1, ..., X_d \}$ be a set of random variables and follow a joint Gaussian distribution $X \sim \mathcal{N}(\mu, \Lambda^{-1})$ where $\Lambda \in \mathbb{S}^{++}$ is the precision matrix. Let $X_j,X_k$ be two nodes in $X$, and $Z = \{X_i \ | \ i \notin \{j,k\}\}$ denote the remaining nodes. Show that $X_j \perp X_k \ | \ Z$ if and only if $\Lambda_{jk} = 0$.
+
+
+
+
+\newpage
+
+\section{Exact Inference [40 points] (Xun)}
+
+\subsection{Variable elimination on a grid [10 points]}
+
+Consider the following Markov network:
+
+\begin{figure}[h]
+\centering
+\begin{tikzcd}
+A \arrow[r, dash] & B \arrow[r, dash] & C \\
+D \arrow[r, dash] \arrow[u, dash] & E \arrow[r, dash] \arrow[u, dash] & F \arrow[u, dash] \\
+G \arrow[r, dash] \arrow[u, dash] & H \arrow[r, dash] \arrow[u, dash] & I \arrow[u, dash]
+\end{tikzcd}
+\end{figure}
+
+
+We are going to see how \emph{tree-width}, a property of the graph, is related to the intrinsic complexity of variable elimination of a distribution. 
+
+
+\begin{enumerate}
+
+\item \textbf{[2 points]} Write down largest clique(s) for the elimination order $ E, D, H, F, B, A, G, I, C $.
+
+
+
+\item \textbf{[2 points]} Write down largest clique(s) for the elimination order $ A, G, I, C, D, H, F, B, E $. 
+
+
+
+\item \textbf{[2 points]} Which of the above ordering is preferable? Explain briefly. 
+
+
+
+\item \textbf{[4 points]} Using this intuition, give a reasonable $ (\ll n^2) $ upper bound on the tree-width of the $ n \times n $ grid. 
+
+
+
+\end{enumerate}
+
+\subsection{Junction tree in action: part 1 [10 points]}
+
+
+
+Consider the following Bayesian network $ \Gcal $:
+\begin{figure}[h]
+\centering
+\begin{tikzcd}
+A \arrow[r] \arrow[rd] & B \arrow[r] & C \arrow[d] \\
+& E \arrow[r] &  D  
+\end{tikzcd}
+\end{figure}
+
+We are going to construct a junction tree $ \Tcal $ from $ \Gcal $.
+Please sketch the generated objects in each step.
+
+\begin{enumerate}
+\item \textbf{[1 pts]} Moralize $ \Gcal $ to construct an undirected graph $ \Hcal $.
+
+
+
+\item \textbf{[3 pts]} Triangulate $ \Hcal $ to construct a chordal graph $ \Hcal^* $. 
+
+(Although there are many ways to triangulate a graph, for the ease of grading, please use the triangulation that corresponds to the elimination order $ A, B, C, D, E $.)
+
+
+\item \textbf{[3 pts]} Construct a cluster graph $ \Ucal $ where each node is a maximal clique $ \Cbs_i $ from $ \Hcal^* $ and each edge is the sepset $ \Sbs_{i,j} = \Cbs_i \cap \Cbs_j $ between adjacent cliques $ \Cbs_i $ and $ \Cbs_j $. 
+
+
+
+
+\item \textbf{[3 pts]} Run maximum spanning tree algorithm on $ \Ucal $ to construct a junction tree $ \Tcal $. 
+
+(The cluster graph is small enough to calculate maximum spanning tree in one's head.)
+
+
+\end{enumerate}
+
+
+
+\subsection{Junction tree in action: part 2 [20 points]}
+
+Continuing from part 1, now assume all variables are binary and the CPDs are parameterized as follows:
+\begin{table}[h]
+\centering
+\hspace{-2em}
+\begin{subtable}[]{0.14\textwidth}
+\begin{tabular}{@{}ccc@{}}
+\toprule
+$A$ & $P(A)$ \\ \midrule
+0  &  $ x_0 $     \\ \bottomrule
+\end{tabular}
+\end{subtable}
+~
+\begin{subtable}[]{0.2\textwidth}
+\begin{tabular}{@{}ccc@{}}
+\toprule
+$A$ & $B$ & $P(B|A)$ \\ \midrule
+0   & 0   &   $ x_1 $      \\
+1   & 0   &   $ x_2 $     \\ \bottomrule
+\end{tabular}
+\end{subtable}
+~
+\begin{subtable}[]{0.2\textwidth}
+\begin{tabular}{@{}ccc@{}}
+\toprule
+$A$ & $E$ & $P(E|A)$ \\ \midrule
+0   & 0   & $ x_3 $      \\
+1   & 0   & $ x_4 $      \\ \bottomrule
+\end{tabular}
+\end{subtable}
+~
+\begin{subtable}[]{0.2\textwidth}
+\begin{tabular}{@{}ccc@{}}
+\toprule
+$B$ & $C$ & $P(C|B)$ \\ \midrule
+0   & 0   &  $ x_5 $      \\
+1   & 0   &  $ x_6 $      \\ \bottomrule
+\end{tabular}
+\end{subtable}
+~
+\begin{subtable}[]{0.2\textwidth}
+\begin{tabular}{@{}cccc@{}}
+\toprule
+$C$ & $E$ & $ D $ & $P(D|C, E)$ \\ \midrule
+0   & 0   &  0 &  $ x_7 $      \\
+0   & 1   &  0 &  $ x_8 $     \\ 
+1   & 0   &  0 &  $ x_9 $      \\
+1   & 1   &  0 &  $ x_{10} $      \\ \bottomrule
+\end{tabular}
+\end{subtable}
+\end{table}
+
+We are going to implement belief propagation on $ \Tcal $.
+The provided template \verb|junction_tree.py| contains the following tasks:
+
+
+\begin{itemize}
+\item \verb|initial_clique_potentials()|: Compute  initial clique potentials $ \psi_i (\Cbs_i) $ from factors $ \phi_i  $. 
+
+\item \verb|messages()|: Compute messages $ \delta_{i \to j}  $ from initial clique potentials $ \psi_i (\Cbs_i)  $.
+
+\item \verb|beliefs()|: Compute calibrated clique beliefs $ \beta_i(\Cbs_i) $ and sepset beliefs $ \mu_{i,j} (\Sbs_{i,j})  $, using initial clique potentials $ \psi_i (\Cbs_i) $ and messages $ \delta_{i \to j}  $. 
+
+\item Using the beliefs $ \beta_i(\Cbs_i), \mu_{i,j} (\Sbs_{i,j}) $, compute 
+\begin{itemize}
+\item \verb|query1()|: $ P(B) $
+\item \verb|query2()|: $ P(A | C) $
+\item \verb|query3()|: $ P(A, B, C, D, E) $
+\end{itemize}
+
+\end{itemize}
+
+Please finish the unimplemented TODO blocks and submit completed \verb|junction_tree.py| to Gradescope (\verb|https://www.gradescope.com/courses/36025|). 
+
+
+In the implementation, please represent factors as \verb|numpy.ndarray| and store different factors in a dictionary with its scope as the key.
+For example, as provided in the template, \verb|phi['ab']| is a factor $ \phi_{AB} $ represented as a $ 2 \times 2 $ matrix, where \verb|phi['ab'][0, 0]| $ = \phi_{AB} (A = 0, B = 0) =  P(B= 0 | A = 0)  = x_1 $.
+For messages, one can use \verb|delta['ab_cd']| to denote a message from $ AB $ to $ CD $.
+Most functions can be written in 3 lines of code. 
+You may find \verb|np.einsum()| useful.
+
+\newpage
+
+\section{Parameter Learning [15 points] (Xun)}
+
+
+\begin{figure}[h]
+\centering
+\begin{tikzcd}
+Y_1 \arrow[r] \arrow[d] & Y_2 \arrow[r] \arrow[d] & \cdots \arrow[r] & Y_T \arrow[d] \\
+X_1  &  X_2  & & X_T
+\end{tikzcd}
+\end{figure}
+
+Consider an HMM with $ Y_t \in [M] $, $ X_t \in \mathbb{R}^{K} $ ($ M, K \in \mathbb{N} $).
+Let $ (\pi, A, \{\mu_i, \sigma_i^2\}_{i=1}^M) $ be its parameters, where $ \pi \in \mathbb{R}^{M} $ is the initial state distribution, $ A \in \mathbb{R}^{M \times M} $ is the transition matrix, $ \mu_i \in \mathbb{R}^{K} $ and $ \sigma_i^2 > 0 $ are parameters of the emission distribution, which is defined to be an isotropic Gaussian. 
+In other words,
+\begin{align}
+P(Y_1 = i) & = \pi_{i} \\
+P(Y_{t+1} = j | Y_t = i) & = A_{ij} \\
+P(X_t | Y_t = i) & = \Ncal(X_t; \mu_i, \sigma_i^2 I).
+\end{align}
+
+
+We are going to implement the Baum-Welch (EM) algorithm that estimates parameters from data $ \boldsymbol{X} \in \mathbb{R}^{N \times T \times K} $, which is a collection of $ N $ observed sequences of length $ T $. 
+Note that there are different forms of forward-backward algorithms, for instance the $ (\alpha,\gamma) $-recursion, which is slightly different from the $ (\alpha,\beta)$-recursion we saw in the class. 
+For the ease of grading, however, please implement the $ (\alpha,\beta) $ version, and remember to normalize the messages at each step for numerical stability.
+
+
+Please complete the unimplemented TODO blocks in the template \verb|baum_welch.py| and submit it to Gradescope (\verb|https://www.gradescope.com/courses/36025|).
+The template has its own toy problem to verify the implementation. 
+The test cases are ran on other randomly generated problem instances.
+
+
+
+\newpage
+\bibliography{pgm}
+\bibliographystyle{abbrvnat}
+
+
+\end{document}
