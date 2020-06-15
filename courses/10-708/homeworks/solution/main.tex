@@ -42,6 +42,7 @@
 \newcommand{\Ucal}{\mathcal{U}}
 \newcommand{\Tcal}{\mathcal{T}}
 \newcommand{\Ncal}{\mathcal{N}}
+\newcommand{\Xcal}{\mathcal{X}}
 \newcommand{\Cbs}{\boldsymbol{C}}
 \newcommand{\Sbs}{\boldsymbol{S}}
 \newcommand{\Pa}{\text{Pa}}
@@ -201,18 +202,135 @@ P \text{ factorizes over } \Gcal
     \item Prove the following properties:
     \begin{itemize}
         \item \textbf{[2 points]} If $A \perp {\color{red} (B,D) } \ | \ C$ then $A \perp B \ | \ C$.
+        \begin{solution}
+          \small
+         \begin{eqnarray*}
+           P(A, B|C) &=& \sum_d P(A, B|C,D) P(D) \\
+                     &=& \sum_d P(A|B,C,D) P(B|C,D) P(D)\\
+                     &=& \sum_d P(A|C) P(B|C,D)P(D)\\
+                     &=& P(A|C) \sum_d P(B|C,D)P(D)\\
+                     &=& P(A|C) P(B|C)
+         \end{eqnarray*} 
+        \end{solution}
         \item \textbf{[2 points]} If $A \perp {\color{red} (B,D) } \ | \ C$ then $A \perp B \ | \ {\color{red} (C,D) }$ and $A \perp D \ | \ {\color{red} (B,C) }$.
+      \begin{solution}
+        We have
+        \begin{eqnarray}
+          P(A,B,D|C) &=&  P(A,B|D,C)P(D)\\
+                     &=& P(A|C,D) P(B|C,D) P(D)
+        \end{eqnarray}
+        From the equatlity  between line (1) and (2), we could conclude
+        that 
+      \[
+      P(A,B|C,D) = P(A|C,D) P(B|C,D)
+      \]
+      the same proof, is applied for $D$.
+      \end{solution}
         \item \textbf{[2 points]} For strictly positive distributions, if $A \perp B \ | \ {\color{red} (C,D) }$ and $A \perp C \ | \ {\color{red} (B,D) }$ then $A \perp {\color{red} (B,C) } \ | \ D$.
+          \begin{solution}
+          using the chain rule we can write:
+            \begin{eqnarray*}
+              P(A,B,C|D) &=& P(A|B,C,D) P(B,C|D)\\
+                         &=& P(A|D) P (B,C|D,A)
+            \end{eqnarray*}
+            In the secon equation since $A \perp B | (C,D)$ and $A \perp C|
+            (B,D)$, we could conclude that $P(B,C|D,A) = P(B,C|D)$. Now we
+            combine both equations we found that 
+            \[
+              P(A|B,C,D)P(B,C|D) = P(A|D)P(B,C|D)
+            \]
+            Hence, we conclude that $A\perp (B,C) | D$
+          \end{solution}
     \end{itemize}
     \item \textbf{[6 points]} Show that for any undirected graph $G$ and distribution $P$, if $P$ factorizes according to $G$, then $P$ will also satisfy the global Markov properties of $G$.
+
+      \begin{solution}
+        Let $(X,Y,Z)$ three disjoint sets in $\Xcal$ such as $Z$
+        separates $X$ and $H$ in the markov model $\Hcal$. We shoud
+        proove that $P \models (X \perp Y|Z)$
+
+      \begin{enumerate}
+        \item As a first case, we consider $X\cup Y \cup Z=\Xcal$, As
+          $Z$ separates $X$ and $Y$,  any clique is either in $X\cup Z$ or
+          $Y\cup Z$. We denote $\Ical_X$ the set of indices in
+          $X\cup Z$ and do the same $\Ical_Y$ for $Y$. Then we could
+          write the ditribution $P$ such as:
+          \[
+            P(X_1,\ldots,X_n) = \frac{1}{Z}
+            \prod_{i\in\Ical_X}\phi(D_i)\prod_{i\in\Ical_Y}\phi(D_i)=
+            \frac{1}{Z}f(X,Z)f(Y,Z)
+          \]
+          Which proves that $X$ and $Y$ are independant given $Z$.
+        \item If $X\cup Y \cup Z \subset \Xcal$, then we denote the
+          set $U = X - (X \cup Y \cup Z)$. We could divice the $U=U_1
+          \cup U_2$ such as $U_1$ is connected to $X$ and $U_2$ is
+          connected to $Y$. By doing so, we present the same
+          argument where $U_1$ will be added to $\Ical_X$ and $U_2$
+          to $\Ical_Y$.
+      \end{enumerate}
+      \end{solution}
     \item \textbf{[6 points]} Show that for any undirected graph $G$ and distribution $P$, if $P$ satisfies the local Markov property with respect to $G$, then $P$ will also satisfy the pairwise Markov property of $G$.
+
+      \begin{solution}
+       Let $X$ and $Y$ to be two nodes from the Markov network
+       $\Hcal$. 
+
+       \begin{itemize}
+         \item If $X$ is connected to $Y$ then by the local markov
+           property we have
+           \[
+             \big(X \perp Y| MB_{\Hcal}(X)) \Longrightarrow (X \perp Y
+             | \Xcal - (X,Y)\big)
+           \]
+          \item If $X$ and $Y$ are not connected. They are necesseraly
+            separated by the rest of the nodes in $\Xcal$.
+            \[
+              \big(X\perp Y | \Xcal - (X,Y)\big)
+            \]
+       \end{itemize}
+      \end{solution}
 \end{enumerate}
 
 \subsection{Gaussian Graphical Models [7 points]}
 
 Now we consider a specific instance of undirected graphical models. Let $X = \{ X_1, ..., X_d \}$ be a set of random variables and follow a joint Gaussian distribution $X \sim \mathcal{N}(\mu, \Lambda^{-1})$ where $\Lambda \in \mathbb{S}^{++}$ is the precision matrix. Let $X_j,X_k$ be two nodes in $X$, and $Z = \{X_i \ | \ i \notin \{j,k\}\}$ denote the remaining nodes. Show that $X_j \perp X_k \ | \ Z$ if and only if $\Lambda_{jk} = 0$.
 
+\begin{solution}
+  \begin{itemize}
+    \item $(X_j \perp X_k\;|\;Z) \Longrightarrow
+      \Lambda_{jk}=0$
+      Conditioning on $Z$ will reduce the joint probability on
+      $(X_j, X_k)$ to a Gaussian with the same precision $\Lambda$ which
+      is reduced to the set $(j,k)$ and coefficient are scaled by a
+      factor to ensure normalization.
+      \[
+        \Lambda_{ij}= \text{Cst} \begin{pmatrix} \lambda_{ii} &
+          \lambda_{ij}\\
+          \lambda_{ij} & \lambda_{jj}\\
+        \end{pmatrix}
+      \]
+    The probability $(X_j, X_k|Z)$ is given by 
+    \[
+      P(X_j,X_k|Z) = \text{Cst}\exp\big(\Lambda_{jj}(x_j - \mu_j)^2 + 
+      \Lambda_{kk} (x_k - \mu_k)^2
+      + 2\Lambda_{jk}(x_k-\mu_k)^T(x_j-\mu_j)
+    \big)
+    \]
+    But we know that $(X_j\perp X_k|Z)$, hence the third term must be
+    null. Which implies that $\Lambda_{jk}= 0.$
+  \item  The inverse $\Lambda_{jk}=0\Longrightarrow (X_j \perp X_k | Z)$
+    follows directly from this property as
 
+    \begin{eqnarray}
+      P(X_j, X_k|Z) &=& \text{Cst}\exp (\Lambda_{jj}(x_j-\mu_j)^2 +
+    \Lambda(x_k -\mu_k)^2) \\
+                    &=&
+                    \text{Cst}\exp(\Lambda_{jj}(x_j-\mu_j)^2)
+                    \exp( \Lambda(x_k -\mu_k)^2)\\
+                    &=& P(X_j|Z)P(X_k|Z)
+  \end{eqnarray}
+  \end{itemize}
+\end{solution}
 
 
 \newpage
