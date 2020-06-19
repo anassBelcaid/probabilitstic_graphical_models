@@ -1,5 +1,4 @@
-\documentclass[12pt]{article}
-\usepackage[utf8]{inputenc}
+\documentclass[12pt]{article} \usepackage[utf8]{inputenc}
 \usepackage{fullpage}
 \usepackage{parskip}
 \usepackage{amsmath,amssymb,mathtools}
@@ -30,6 +29,8 @@
 
 
 \usepackage{tikz}
+\usetikzlibrary{bayesnet}
+
 \newcommand*\circled[1]{
 \tikz[baseline=(char.base)]{\node[shape=circle,draw,inner sep=1pt] (char) {#1};}
 }
@@ -358,18 +359,38 @@ We are going to see how \emph{tree-width}, a property of the graph, is related t
 
 \item \textbf{[2 points]} Write down largest clique(s) for the elimination order $ E, D, H, F, B, A, G, I, C $.
 
-
+\begin{solution}
+    The larget clique for the this elimination will be $(A, B, C, G, I)$
+    after eliminating the node $\mathbf{H}$.
+  
+\end{solution}
 
 \item \textbf{[2 points]} Write down largest clique(s) for the elimination order $ A, G, I, C, D, H, F, B, E $. 
 
-
+\begin{solution}
+  This ordering is amazing keeping the maximum clique at most order
+  $\mathbf{3}$. From the first elimination $A$ we get the a maximal clique
+  $BDE$. After each node will remove a simple node and keep cliques at most
+  of lenght $3$.
+\end{solution}
 
 \item \textbf{[2 points]} Which of the above ordering is preferable? Explain briefly. 
 
-
+\begin{solution}
+  The \textbf{second} oredering is clearly better as the complexity of the
+  elimination algorithm is determined by $n^K_{\text{max}}$ where
+  $n$ is the cardinality of the random variables and $K_{\text{max}}$ is the
+  size of the maximal clique.
+\end{solution}
 
 \item \textbf{[4 points]} Using this intuition, give a reasonable $ (\ll n^2) $ upper bound on the tree-width of the $ n \times n $ grid. 
 
+  \begin{solution}
+   Since we process the cliques from the extremities, we assure that the
+   nodes from the left, if we divide the square by half, will never be
+   connected to the right part. Hence the maximal tree width will be at
+   most $\mathbf{\dfrac{n}{2}}$ 
+  \end{solution}
 
 
 \end{enumerate}
@@ -392,16 +413,90 @@ Please sketch the generated objects in each step.
 
 \begin{enumerate}
 \item \textbf{[1 pts]} Moralize $ \Gcal $ to construct an undirected graph $ \Hcal $.
-
+\begin{solution}
+    Since each node contains at most one parent, the \textbf{Moralized
+    graph:} is simply the undirected graph\\[4pt]
+  \begin{center}
+    \begin{tikzpicture}[scale=0.8]
+      \node[latent, minimum size=15pt] (A) at (0,0) {A};
+      \node[latent, minimum size=15pt] (B) at (2,0) {B};
+      \node[latent, minimum size=15pt] (C) at (4,0) {C};
+      \node[latent, minimum size=15pt] (E) at (2,-2) {E};
+      \node[latent, minimum size=15pt] (D) at (4,-2) {D};
+      \edge[-]{A}{B,E}
+      \edge[-]{C}{B,D}
+      \edge[-]{E}{D}
+    \end{tikzpicture}
+  \end{center}
+\end{solution}
 
 
 \item \textbf{[3 pts]} Triangulate $ \Hcal $ to construct a chordal graph $ \Hcal^* $. 
 
 (Although there are many ways to triangulate a graph, for the ease of grading, please use the triangulation that corresponds to the elimination order $ A, B, C, D, E $.)
+\begin{solution}
+  Here is the \textbf{triangulated graph} $\Hcal^{*}$:\\
+  \begin{center}
+    \begin{tikzpicture}[scale=0.8]
+      \node[latent, minimum size=15pt] (A) at (0,0) {A};
+      \node[latent, minimum size=15pt] (B) at (2,0) {B};
+      \node[latent, minimum size=15pt] (C) at (4,0) {C};
+      \node[latent, minimum size=15pt] (E) at (2,-2) {E};
+      \node[latent, minimum size=15pt] (D) at (4,-2) {D};
+      \edge[-]{A}{B,E}
+      \edge[-]{C}{B,D,E}
+      \edge[-]{E}{D,B}
+    \end{tikzpicture}
+  \end{center}
+\end{solution}
+
 
 
 \item \textbf{[3 pts]} Construct a cluster graph $ \Ucal $ where each node is a maximal clique $ \Cbs_i $ from $ \Hcal^* $ and each edge is the sepset $ \Sbs_{i,j} = \Cbs_i \cap \Cbs_j $ between adjacent cliques $ \Cbs_i $ and $ \Cbs_j $. 
+\begin{solution}
+  here is the \textbf{cliqure tree} obtained from the \emph{chordal} graph
+  $\Hcal^{*}$.\\[4pt]
 
+  \begin{center}
+  \begin{tikzpicture}[scale=1.5]
+    %binary cliques
+    \node[rounded corners, draw, thick] (AB) at (0,0) {$AB$};
+    \node[rounded corners, draw, thick] (AE)at (1,1) {$AE$};
+    \node[rounded corners, draw, thick] (BE)at (2,0) {$BE$};
+    \node[rounded corners, draw, thick] (BC)at (3,0) {$BC$};
+    \node[rounded corners, draw, thick] (CD)at (4,1) {$CD$};
+    \node[rounded corners, draw, thick] (ED)at (5,0) {$ED$};
+
+    \node[rounded corners, draw, thick] (EC)at (6,0) {$EC$};
+
+    \path[draw](AB)--(AE);
+    \path[draw](EC)--(ED);
+    \path[draw](EC)edge[bend left](BC);
+    \path[draw](AE)--(BE);
+    \path[draw](AB)--(BE);
+    \path[draw](BE)--(BC);
+    \path[draw](BC)--(CD);
+    \path[draw](CD)--(ED);
+    \path[draw](BE)edge[bend right](ED);
+
+
+    %thre cliques
+    \node[rounded corners, draw, thick] (ABE) at (0, -2){$ABE$};
+    \node[rounded corners, draw, thick] (BEC) at (3, -2){$BEC$};
+    \node[rounded corners, draw, thick] (CED) at (6, -2){$CED$};
+    \path[draw,thick] (AB)--(ABE);
+    \path[draw,thick] (AE)edge[bend right=70](ABE);
+    \path[draw,thick] (BE)--(ABE);
+    \path[draw,thick] (BC)--(BEC);
+    \path[draw,thick] (BE)--(BEC);
+    \path[draw,thick] (EC)--(BEC);
+    \path[draw,thick] (EC)--(CED);
+    \path[draw,thick] (ED)--(CED);
+    \path[draw,thick] (CD)edge[bend left=90](CED);
+  \end{tikzpicture}
+  \end{center}
+  
+\end{solution}
 
 
 
@@ -409,7 +504,34 @@ Please sketch the generated objects in each step.
 
 (The cluster graph is small enough to calculate maximum spanning tree in one's head.)
 
+\begin{solution}
+  Here is the maximum junction tree:\\[4pt]
 
+\begin{center}
+\begin{tikzpicture}[scale=1, transform shape]
+  \foreach \x/\y/\z in {0/0/ABE, 3/0/BEC, 6/0/CED}
+  {
+    \node[rounded corners, draw, thick] (\z) at(\x, \y) {$\z$};
+  }
+  \path[draw,thick](ABE)--(BEC);
+  \path[draw,thick](BEC)--(CED);
+  \node[rounded corners, thick,draw] (AE) at (-2,0) {$AE$};
+  \node[rounded corners, thick,draw] (AB) at (0,1) {$AB$};
+  \node[rounded corners, thick,draw] (BE) at (3,-1) {$BE$};
+  \node[rounded corners, thick,draw] (BC) at (3,1) {$BC$};
+  \node[rounded corners, thick,draw] (CD) at (6,-1) {$CD$};
+  \node[rounded corners, thick,draw] (ED) at (6,1) {$ED$};
+  \node[rounded corners, thick,draw] (EC) at (1.75,-1) {$EC$};
+  \path[thick,draw] (AE)--(ABE);
+  \path[thick,draw] (AB)--(ABE);
+  \path[thick,draw] (BE)--(BEC);
+  \path[thick,draw] (BC)--(BEC);
+  \path[thick,draw] (CD)--(CED);
+  \path[thick,draw] (EC)--(BEC);
+  \path[thick,draw] (ED)--(CED);
+\end{tikzpicture}
+\end{center}
+\end{solution}
 \end{enumerate}
 
 
